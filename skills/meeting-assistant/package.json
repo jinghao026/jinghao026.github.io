@@ -1,0 +1,38 @@
+{
+  "name": "meeting-assistant",
+  "version": "1.0.0",
+  "description": "智能会议助手 - 语音转文字、生成会议纪要、自动提取任务",
+  "main": "meeting_assistant.py",
+  "bin": {
+    "meeting-assistant": "meeting_assistant.py"
+  },
+  "scripts": {
+    "test": "python -m pytest tests/",
+    "demo": "python meeting_assistant.py -i demo.mp3"
+  },
+  "keywords": [
+    "meeting",
+    "transcription",
+    "whisper",
+    "ai",
+    "automation",
+    "workflow"
+  ],
+  "author": "OpenClaw Community",
+  "license": "MIT",
+  "dependencies": {
+    "openai-whisper": ">=20231117",
+    "openai": ">=1.0.0"
+  },
+  "optionalDependencies": {
+    "pyannote.audio": ">=3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jinghao026/meeting-assistant"
+  },
+  "bugs": {
+    "url": "https://github.com/jinghao026/meeting-assistant/issues"
+  },
+  "homepage": "https://github.com/jinghao026/meeting-assistant#readme"
+}
