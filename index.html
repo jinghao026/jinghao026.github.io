@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加入我们 - 招聘信息</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .job-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .job-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: #f0f0f0;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .tag.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .job-summary {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+        
+        .arrow {
+            color: #999;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .job-card:hover .arrow {
+            transform: translateX(4px);
+            color: #667eea;
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .modal-header .tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .modal-header .tag {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 28px;
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .section li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .section li::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 8px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .apply-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .job-card {
+                padding: 20px;
+            }
+            
+            .job-title {
+                font-size: 1.1rem;
+            }
+            
+            .modal-content {
+                max-height: 90vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 加入我们</h1>
+            <p>探索激动人心的职业机会，与我们一起创造未来</p>
+        </div>
+        
+        <div class="job-list" id="jobList">
+            <!-- 职位列表将通过 JavaScript 生成 -->
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 公司名称 | 期待与你相遇</p>
+        </div>
+    </div>
+    
+    <!-- 职位详情弹窗 -->
+    <div class="modal" id="jobModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">×</button>
+                <h2 id="modalTitle">职位名称</h2>
+                <div class="tags" id="modalTags"></div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 详情内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 职位数据
+        const jobs = [
+            {
+                id: 1,
+                title: "高级前端工程师",
+                department: "技术部",
+                location: "北京/上海",
+                type: "全职",
+                salary: "25-40K",
+                summary: "负责公司核心产品的前端架构设计与开发，打造极致用户体验",
+                description: "我们正在寻找一位经验丰富的前端工程师，加入我们的技术团队，共同打造行业领先的产品。",
+                requirements: [
+                    "5年以上前端开发经验，精通 React/Vue 框架",
+                    "熟悉前端工程化，有大型项目架构经验",
+                    "对性能优化、用户体验有深入理解",
+                    "具备良好的团队协作能力和技术领导力"
+                ],
+                responsibilities: [
+                    "负责前端架构设计和技术选型",
+                    "核心功能模块的开发与维护",
+                    "指导初中级工程师，进行代码评审",
+                    "持续优化前端性能和用户体验"
+                ],
+                benefits: [
+                    "具有竞争力的薪酬 package",
+                    "弹性工作制，远程办公支持",
+                    "技术大会和学习经费",
+                    "股票期权计划"
+                ]
+            },
+            {
+                id: 2,
+                title: "产品经理",
+                department: "产品部",
+                location: "北京",
+                type: "全职",
+                salary: "20-35K",
+                summary: "主导产品规划与设计，将用户需求转化为优秀的产品方案",
+                description: "作为产品经理，你将负责产品的全生命周期管理，从需求分析到产品上线。",
+                requirements: [
+                    "3年以上互联网产品经验",
+                    "具备优秀的需求分析和文档撰写能力",
+                    "熟悉敏捷开发流程",
+                    "有数据驱动的产品决策能力"
+                ],
+                responsibilities: [
+                    "负责产品规划和需求分析",
+                    "撰写产品需求文档(PRD)",
+                    "协调设计、开发、测试等团队",
+                    "跟踪产品数据，持续优化迭代"
+                ],
+                benefits: [
+                    "有竞争力的薪资待遇",
+                    "扁平化管理，充分的产品决策权",
+                    "完善的培训体系",
+                    "年度体检和团建活动"
+                ]
+            },
+            {
+                id: 3,
+                title: "UI/UX 设计师",
+                department: "设计部",
+                location: "上海/远程",
+                type: "全职",
+                salary: "18-30K",
+                summary: "创造美观且易用的界面设计，提升产品的视觉体验",
+                description: "我们需要一位富有创意的设计师，为产品带来出色的视觉体验和用户界面。",
+                requirements: [
+                    "3年以上 UI/UX 设计经验",
+                    "精通 Figma、Sketch 等设计工具",
+                    "有完整的设计系统搭建经验",
+                    "具备良好的审美和沟通能力"
+                ],
+                responsibilities: [
+                    "负责产品界面设计和用户体验优化",
+                    "建立和维护设计规范",
+                    "参与产品需求讨论，提供设计建议",
+                    "制作高保真原型和交互说明"
+                ],
+                benefits: [
+                    "创意自由的工作环境",
+                    "最新设计工具和设备",
+                    "设计大会参与机会",
+                    "灵活的工作时间"
+                ]
+            },
+            {
+                id: 4,
+                title: "后端开发工程师",
+                department: "技术部",
+                location: "北京/深圳",
+                type: "全职",
+                salary: "22-38K",
+                summary: "构建高性能、高可用的后端服务，支撑业务快速发展",
+                description: "加入我们的后端团队，参与设计和开发高性能的分布式系统。",
+                requirements: [
+                    "3年以上后端开发经验，精通 Go/Java/Python 之一",
+                    "熟悉微服务架构和分布式系统",
+                    "有数据库设计和优化经验",
+                    "熟悉 Docker、Kubernetes 等云原生技术"
+                ],
+                responsibilities: [
+                    "设计和开发高并发后端服务",
+                    "数据库设计和性能优化",
+                    "参与系统架构设计",
+                    "编写技术文档和单元测试"
+                ],
+                benefits: [
+                    "技术驱动的公司文化",
+                    "丰富的技术挑战机会",
+                    "完善的职业发展路径",
+                    "股票期权激励"
+                ]
+            },
+            {
+                id: 5,
+                title: "市场营销专员",
+                department: "市场部",
+                location: "北京",
+                type: "全职",
+                salary: "12-20K",
+                summary: "策划和执行营销活动，提升品牌知名度和用户增长",
+                description: "负责公司产品的市场推广和品牌建设，与用户建立深度连接。",
+                requirements: [
+                    "2年以上市场营销经验",
+                    "熟悉数字营销和社交媒体运营",
+                    "具备优秀的文案撰写能力",
+                    "有数据分析和报告能力"
+                ],
+                responsibilities: [
+                    "策划和执行营销活动",
+                    "管理社交媒体账号",
+                    "撰写营销文案和新闻稿",
+                    "分析营销数据，优化投放策略"
+                ],
+                benefits: [
+                    "充满活力的团队氛围",
+                    "丰富的市场资源支持",
+                    "绩效奖金制度",
+                    "快速晋升通道"
+                ]
+            },
+            {
+                id: 6,
+                title: "数据分析师",
+                department: "数据部",
+                location: "北京/上海",
+                type: "全职",
+                salary: "20-32K",
+                summary: "挖掘数据价值，为业务决策提供数据支持和洞察",
+                description: "通过数据分析帮助公司理解用户行为，优化产品和运营策略。",
+                requirements: [
+                    "3年以上数据分析经验",
+                    "精通 SQL、Python 和数据分析工具",
+                    "熟悉数据可视化工具",
+                    "具备商业敏感度和逻辑思维"
+                ],
+                responsibilities: [
+                    "构建数据分析体系和报表",
+                    "深入分析用户行为数据",
+                    "为产品优化提供数据建议",
+                    "建立数据监控和预警机制"
+                ],
+                benefits: [
+                    "数据驱动的决策文化",
+                    "接触海量真实数据",
+                    "专业数据团队支持",
+                    "持续学习成长机会"
+                ]
+            }
+        ];
+
+        // 生成职位列表
+        function renderJobList() {
+            const jobList = document.getElementById('jobList');
+            jobList.innerHTML = jobs.map(job => `
+                <div class="job-card" onclick="openModal(${job.id})">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">${job.title}</div>
+                            <div class="job-tags">
+                                <span class="tag highlight">${job.department}</span>
+                                <span class="tag">${job.location}</span>
+                                <span class="tag">${job.type}</span>
+                                <span class="tag">${job.salary}</span>
+                            </div>
+                        </div>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="job-summary">${job.summary}</div>
+                </div>
+            `).join('');
+        }
+
+        // 打开弹窗
+        function openModal(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job) return;
+
+            document.getElementById('modalTitle').textContent = job.title;
+            document.getElementById('modalTags').innerHTML = `
+                <span class="tag">${job.department}</span>
+                <span class="tag">${job.location}</span>
+                <span class="tag">${job.type}</span>
+                <span class="tag">${job.salary}</span>
+            `;
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="section">
+                    <p style="color: #666; line-height: 1.8; font-size: 1.05rem;">${job.description}</p>
+                </div>
+                
+                <div class="section">
+                    <h3>📋 岗位职责</h3>
+                    <ul>
+                        ${job.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h3>🎯 任职要求</h3>
+                    <ul>
+                        ${job.requirements.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h3>🎁 福利待遇</h3>
+                    <ul>
+                        ${job.benefits.map(b => `<li>${b}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <button class="apply-btn" onclick="applyJob('${job.title}')">立即申请</button>
+            `;
+
+            document.getElementById('jobModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('jobModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 申请职位
+        function applyJob(jobTitle) {
+            alert(`感谢您对「${jobTitle}」职位的关注！\n\n请将简历发送至：hr@company.com\n邮件标题请注明：应聘-${jobTitle}`);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('jobModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 初始化
+        renderJobList();
+    </script>
+</body>
+</html>
